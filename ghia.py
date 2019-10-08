@@ -7,7 +7,6 @@ import configparser
 import requests
 import click
 import re
-import json
 
 
 # checks if any user pattern matches the issue
@@ -54,7 +53,7 @@ def add_fallback_label(issue, token, label, dry_run):
     # publish changes to GitHub
     labels.append(label)
     r = requests.patch(issue['url'],
-                       data=json.dumps({'labels': labels}),
+                       json={'labels': labels},
                        headers={'Authorization': f"token {token}"})
 
     if r.status_code != 200:
@@ -64,7 +63,7 @@ def add_fallback_label(issue, token, label, dry_run):
 # publishes changes in assignees to GitHub
 def reassign(token, old, new, issue):
     r = requests.patch(issue['url'],
-                       data=json.dumps({'assignees': list(new)}),
+                       json={'assignees': list(new)},
                        headers={'Authorization': f"token {token}"})
 
     if r.status_code != 200:
@@ -93,12 +92,11 @@ def print_assign_diff(old, new):
 # gathers issues from the API
 def gather_issues(reposlug, token):
     user, repo = reposlug.split('/')
+    url = f"https://api.github.com/repos/{user}/{repo}/issues"
     issues = []
-    page = 1
 
     while True:
         # request issues
-        url = f"https://api.github.com/repos/{user}/{repo}/issues?page={page}"
         r = requests.get(url, headers={'Authorization': f"token {token}"})
 
         if r.status_code != 200:
@@ -108,12 +106,12 @@ def gather_issues(reposlug, token):
             ), err=True)
             exit(10)
 
+        issues += r.json()
         # stop paginating once we reach the end
-        if r.json() == []:
+        if 'next' not in r.links:
             return issues
 
-        issues += r.json()
-        page += 1
+        url = r.links['next']['url']
 
 
 def validate_reposlug(ctx, param, value):
@@ -160,6 +158,10 @@ def main(strategy, dry_run, config_auth, config_rules, reposlug):
     issues = gather_issues(reposlug, token)
 
     for issue in issues:
+        # skip closed issues
+        if issue['state'] == 'closed':
+            continue
+
         # print the info line
         click.echo("-> {} ({})".format(
             click.style(f"{reposlug}#{issue['number']}", bold=True),
