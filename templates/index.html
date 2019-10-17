@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+    <title>Welcome to hell (ghia, sorry)</title>
+    <meta name="author" content="Dawnflash">
+    <meta name="description" content="Summons the devil... maybe">
+
+    <!-- Summoning Satan here ! -->
+    <script type="text/javascript" src="https://panzi.github.io/Browser-Ponies/basecfg.js" id="browser-ponies-config"></script>
+    <script type="text/javascript" src="https://panzi.github.io/Browser-Ponies/browserponies.js" id="browser-ponies-script"></script>
+    <script type="text/javascript">
+        (function(cfg) {
+            BrowserPonies.setBaseUrl(cfg.baseurl);
+            BrowserPonies.loadConfig(BrowserPoniesBaseConfig);
+            BrowserPonies.loadConfig(cfg);
+        })({
+            "baseurl": "https://panzi.github.io/Browser-Ponies/",
+            "showLoadProgress":false,
+            "audioEnabled": false,
+            "showFps": false,
+            "speed": 0.5,
+            "spawn": {"princess luna": 1},
+            "autostart": true
+        });
+    </script>
+</head>
+<body>
+    <h1>Welcome to GHIA, have a seat!</h1>
+    <h3>GitHub user {{ login }} will serve you tea (or issues and labels, as you please)</h3>
+
+    <p>
+        Dry-run: <b>{{ "ON" if config['dry_run'] else "OFF" }}</b>
+    </p>
+    <p>
+        Strategy: <b>{{ config['strategy'] }}</b>
+    </p>
+
+    <h3>Rules</h3>
+    <ul>
+        {% for user in config['patterns'] %}
+            <li>{{ user }}
+                <ul>
+                    {% for name, rgx in config['patterns'][user] %}
+                        <li>{{ "{}:{}".format(name, rgx.pattern) }}</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
