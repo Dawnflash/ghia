@@ -97,9 +97,6 @@ def webapp_init():
 
 
 def webapp_conf_fetch(paths):
-    if paths is None:
-        return None
-
     config = configparser.ConfigParser()
     config.optionxform = str
     try:
