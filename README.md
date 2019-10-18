@@ -1,3 +1,6 @@
 # GitHub Issue Assigner (GHIA)
 
-See: https://github.com/cvut/ghia
+## MI-PYT assignment
+Assignment: https://github.com/cvut/ghia
+
+Webapp (receiving github webhooks): http://ghia.dawnflash.cz
