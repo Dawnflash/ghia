@@ -47,5 +47,10 @@
             </li>
         {% endfor %}
     </ul>
+    {% if 'fallback' in config %}
+        <h3>Issues without assignees will receive the following label: "{{ config['fallback']['label'] }}"</h3>
+    {% else %}
+        <h3>Issues without assignees will not receive a fallback label</h3>
+    {% endif %}
 </body>
 </html>
