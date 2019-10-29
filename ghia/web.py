@@ -27,9 +27,15 @@ def create_app():
         click.echo("Bad config", err=True)
         exit(10)
 
-    current_app.config['ghia'] = config
-    current_app.config['ghia']['strategy'] = strategy
-    current_app.config['ghia']['dry_run'] = dry_run
+    login = get_gh_login(config['github']['token'])
+    if not login:
+        click.echo("Invalid token", err=True)
+        exit(10)
+
+    app.config['ghia'] = config
+    app.config['ghia']['login'] = login
+    app.config['ghia']['strategy'] = strategy
+    app.config['ghia']['dry_run'] = dry_run
 
     return app
 
@@ -38,10 +44,9 @@ def create_app():
 @index_bp.route('/', methods=['GET', 'POST'])
 def index():
     config = current_app.config['ghia']
-    login = get_gh_login(config['github']['token'])
 
     if request.method == 'GET':
-        return render_template('index.html', config=config, login=login)
+        return render_template('index.html', config=config)
 
     # Validate request
     if not webapp_gh_validate():

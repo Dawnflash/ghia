@@ -17,7 +17,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'ghia = ghia.cli:main',
+            'ghia = ghia.cli:cli',
         ],
     },
     python_requires='>=3.6',
@@ -25,6 +25,8 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python :: 3.6',
+        'Framework :: Flask',
     ],
     install_requires=['Flask', 'click', 'requests'],
     zip_safe=False,

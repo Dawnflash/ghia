@@ -26,7 +26,7 @@
 </head>
 <body>
     <h1>Welcome to GHIA, have a seat!</h1>
-    <h3>GitHub user {{ login }} will serve you tea (or issues and labels, as you please)</h3>
+    <h3>GitHub user {{ config['login'] }} will serve you tea (or issues and labels, as you please)</h3>
 
     <p>
         Dry-run: <b>{{ "ON" if config['dry_run'] else "OFF" }}</b>
