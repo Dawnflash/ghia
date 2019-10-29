@@ -36,7 +36,7 @@ def click_validate_reposlug(ctx, param, value):
               required=True, type=click.File('r'), callback=click_validate_config_rules)
 @click.argument('reposlug', callback=click_validate_reposlug)
 def cli_cmd(strategy, dry_run, config_auth, config_rules, reposlug):
-    """CLI tool for automatic assigning of GitHub issues"""
+    """CLI tool for automatic issue assigning of GitHub issues"""
 
     config = {**config_auth, **config_rules}
     config['strategy'] = strategy

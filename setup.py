@@ -10,11 +10,13 @@ setup(
     description='Assigns GitHub issues to people (cli batch/webhook)',
     long_description=long_description,
     long_description_content_type="text/markdown",
+    keywords='github, issues, webhook, cli',
     author='Adam Zahumensky',
     author_email='zahumada@fit.cvut.cz',
     license='MIT License',
     url='https://github.com/Dawnflash/ghia',
     packages=find_packages(),
+    package_data={'ghia': ['templates/*.html']},
     entry_points={
         'console_scripts': [
             'ghia = ghia.cli:cli',
@@ -27,6 +29,8 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python :: 3.6',
         'Framework :: Flask',
+        'Environment :: Console',
+        'Environment :: Web Environment',
     ],
     install_requires=['Flask', 'click', 'requests'],
     zip_safe=False,
