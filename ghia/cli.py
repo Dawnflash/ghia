@@ -35,7 +35,7 @@ def click_validate_reposlug(ctx, param, value):
 @click.option('-r', '--config-rules', help='File with assignment rules configuration.',
               required=True, type=click.File('r'), callback=click_validate_config_rules)
 @click.argument('reposlug', callback=click_validate_reposlug)
-def cli_cmd(strategy, dry_run, config_auth, config_rules, reposlug):
+def main_cmd(strategy, dry_run, config_auth, config_rules, reposlug):
     """CLI tool for automatic issue assigning of GitHub issues"""
 
     config = {**config_auth, **config_rules}
@@ -55,5 +55,5 @@ def cli_cmd(strategy, dry_run, config_auth, config_rules, reposlug):
         process_issue(issue, config, verbose=True)
 
 
-def cli():
-    cli_cmd(prog_name='ghia')
+def main():
+    main_cmd(prog_name='ghia')

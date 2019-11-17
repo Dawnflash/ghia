@@ -19,7 +19,7 @@ setup(
     package_data={'ghia': ['templates/*.html', 'tests']},
     entry_points={
         'console_scripts': [
-            'ghia = ghia.cli:cli',
+            'ghia = ghia.cli:main',
         ],
     },
     python_requires='>=3.6',
