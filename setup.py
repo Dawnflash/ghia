@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-from setuptools import setup, find_packages
+from setuptools import setup
 
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -15,8 +15,8 @@ setup(
     author_email='zahumada@fit.cvut.cz',
     license='MIT License',
     url='https://github.com/Dawnflash/ghia',
-    packages=find_packages(),
-    package_data={'ghia': ['templates/*.html']},
+    packages=['ghia'],
+    package_data={'ghia': ['templates/*.html', 'tests']},
     entry_points={
         'console_scripts': [
             'ghia = ghia.cli:cli',
@@ -33,5 +33,7 @@ setup(
         'Environment :: Web Environment',
     ],
     install_requires=['Flask', 'click', 'requests'],
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest', 'betamax'],
     zip_safe=False,
 )
