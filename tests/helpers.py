@@ -1,10 +1,23 @@
 import os
 import pathlib
 import atexit
+from ghia.helpers import load_config
 
 
 def config(name):
     return pathlib.Path(__file__).parent / 'fixtures' / f"{name}.cfg"
+
+
+def inject_flask_env(strategy=None, dryrun=None):
+    os.environ['GHIA_CONFIG'] = f"{config('auth')}:{config('rules')}"
+    if strategy:
+        os.environ['GHIA_STRATEGY'] = strategy
+    else:
+        os.environ.pop('GHIA_STRATEGY', None)
+    if dryrun:
+        os.environ['GHIA_DRYRUN'] = "on"
+    else:
+        os.environ.pop('GHIA_DRYRUN', None)
 
 
 def mkauth(token, secret):
@@ -16,13 +29,17 @@ def mkauth(token, secret):
     config('auth').write_text(conf)
 
 
-def mkauth_default():
+def auth_default():
     token, secret = 40 * 'f', 40 * 'f'
     if 'GITHUB_TOKEN' in os.environ:
         token = os.environ['GITHUB_TOKEN']
     if 'GITHUB_SECRET' in os.environ:
         secret = os.environ['GITHUB_SECRET']
-    mkauth(token, secret)
+    return token, secret
+
+
+def mkauth_default():
+    mkauth(*auth_default())
 
 
 def repo():

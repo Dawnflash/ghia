@@ -35,5 +35,6 @@ setup(
     install_requires=['Flask', 'click', 'requests'],
     setup_requires=['pytest-runner'],
     tests_require=['pytest', 'betamax'],
+    test_suite="tests",
     zip_safe=False,
 )

@@ -93,4 +93,5 @@ def webapp_gh_validate():
 
     algo, sign = sign_hdr.split('=')
     dg = hmac.new(secret.encode('utf8'), request.data, algo)
+    print(request.data, algo, dg.hexdigest())
     return hmac.compare_digest(dg.hexdigest(), sign)
