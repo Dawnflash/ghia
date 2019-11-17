@@ -1,3 +1,4 @@
+import requests
 import click
 import re
 from .helpers import load_config, load_config_auth, load_config_rules
@@ -25,6 +26,20 @@ def click_validate_reposlug(ctx, param, value):
     return value
 
 
+def batch_process(config, reposlug, session=requests.Session()):
+    token = config['github']['token']
+    issues = gather_issues(session, reposlug, token)
+
+    for issue in issues:
+        if issue['state'] == 'closed':
+            continue
+        click.echo("-> {} ({})".format(
+            click.style(f"{reposlug}#{issue['number']}", bold=True),
+            issue['html_url']
+        ))
+        process_issue(session, issue, config, verbose=True)
+
+
 @click.command()
 @click.option('-s', '--strategy', help='How to handle assignment collisions.',
               type=click.Choice(['append', 'set', 'change']),
@@ -42,17 +57,7 @@ def main_cmd(strategy, dry_run, config_auth, config_rules, reposlug):
     config['strategy'] = strategy
     config['dry_run'] = dry_run
 
-    token = config['github']['token']
-    issues = gather_issues(reposlug, token)
-
-    for issue in issues:
-        if issue['state'] == 'closed':
-            continue
-        click.echo("-> {} ({})".format(
-            click.style(f"{reposlug}#{issue['number']}", bold=True),
-            issue['html_url']
-        ))
-        process_issue(issue, config, verbose=True)
+    batch_process(config, reposlug)
 
 
 def main():

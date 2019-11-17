@@ -1,3 +1,4 @@
+import requests
 import hmac
 import os
 import click
@@ -27,7 +28,7 @@ def create_app(config_filename=None):
         click.echo("Bad config", err=True)
         exit(10)
 
-    login = get_gh_login(config['github']['token'])
+    login = get_gh_login(requests.Session(), config['github']['token'])
     if not login:
         click.echo("Invalid token", err=True)
         exit(10)
@@ -71,7 +72,7 @@ def webapp_gh_issue_handler():
         return '', 200
 
     issue = payload['issue']
-    if not process_issue(issue, current_app.config['ghia']):
+    if not process_issue(requests.Session(), issue, current_app.config['ghia']):
         abort(400, description='Received issue cannot be processed')
     return '', 200
 

@@ -3,9 +3,9 @@ import requests
 
 
 # get authenticated user
-def get_gh_login(token):
+def get_gh_login(session, token):
     url = 'https://api.github.com/user'
-    r = requests.get(url, headers={'Authorization': f"token {token}"})
+    r = session.get(url, headers={'Authorization': f"token {token}"})
 
     if r.status_code != 200:
         click.echo("Unable to fetch user", err=True)
@@ -51,7 +51,7 @@ def print_issue_update_error(issue):
         ), err=True)
 
 
-def add_fallback_label(issue, config, verbose):
+def add_fallback_label(session, issue, config, verbose):
     label = config['fallback']['label']
     # check if fallback label already exists
     labels = [l['name'] for l in issue['labels']]
@@ -70,9 +70,9 @@ def add_fallback_label(issue, config, verbose):
     # publish changes to GitHub
     labels.append(label)
     token = config['github']['token']
-    r = requests.patch(issue['url'],
-                       json={'labels': labels},
-                       headers={'Authorization': f"token {token}"})
+    r = session.patch(issue['url'],
+                      json={'labels': labels},
+                      headers={'Authorization': f"token {token}"})
 
     if r.status_code != 200:
         if verbose:
@@ -82,10 +82,10 @@ def add_fallback_label(issue, config, verbose):
 
 
 # publishes changes in assignees to GitHub
-def reassign(token, old, new, issue, verbose):
-    r = requests.patch(issue['url'],
-                       json={'assignees': list(new)},
-                       headers={'Authorization': f"token {token}"})
+def reassign(session, token, old, new, issue, verbose):
+    r = session.patch(issue['url'],
+                      json={'assignees': list(new)},
+                      headers={'Authorization': f"token {token}"})
 
     if r.status_code != 200:
         if verbose:
@@ -98,14 +98,14 @@ def reassign(token, old, new, issue, verbose):
 
 
 # gathers issues from the API
-def gather_issues(reposlug, token):
+def gather_issues(session, reposlug, token):
     user, repo = reposlug.split('/')
     url = f"https://api.github.com/repos/{user}/{repo}/issues"
     issues = []
 
     while True:
         # request issues
-        r = requests.get(url, headers={'Authorization': f"token {token}"})
+        r = session.get(url, headers={'Authorization': f"token {token}"})
 
         if r.status_code != 200:
             click.echo("{}: Could not list issues for repository {}".format(
@@ -122,7 +122,7 @@ def gather_issues(reposlug, token):
         url = r.links['next']['url']
 
 
-def process_issue(issue, config, verbose=False):
+def process_issue(session, issue, config, verbose=False):
     if issue['state'] == 'closed':
         return True
 
@@ -147,11 +147,12 @@ def process_issue(issue, config, verbose=False):
     # use fallback label if it's set and the issue is empty
     if 'fallback' in config:
         if len(new_assignees) == 0:
-            ret &= add_fallback_label(issue, config, verbose)
+            ret &= add_fallback_label(session, issue, config, verbose)
 
     # only send patch requests if necessary
     if not config['dry_run'] and new_assignees != old_assignees:
-        return ret & reassign(token, old_assignees, new_assignees, issue, verbose)
+        return ret & reassign(session, token, old_assignees,
+                              new_assignees, issue, verbose)
 
     if verbose:
         print_assign_diff(old_assignees, new_assignees)
