@@ -1,5 +1,7 @@
 # GitHub Issue Assigner (GHIA)
 
+[![CircleCI](https://circleci.com/gh/Dawnflash/ghia/tree/master.svg?style=svg&circle-token=44975646403e19358f198efec23bd462ae0991db)](https://circleci.com/gh/Dawnflash/ghia/tree/master)
+
 ## MI-PYT assignment
 ### Links
 >Assignment: https://github.com/cvut/ghia \
