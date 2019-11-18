@@ -14,7 +14,7 @@ app_hook_issues_action_wl = ['opened', 'edited', 'transferred', 'reopened',
 
 
 # Gather config
-def create_app(config_filename=None):
+def create_app(session=requests.Session()):
     app = Flask(__name__)
     app.register_blueprint(index_bp)
     # Fetch configuration
@@ -28,7 +28,7 @@ def create_app(config_filename=None):
         click.echo("Bad config", err=True)
         exit(10)
 
-    login = get_gh_login(requests.Session(), config['github']['token'])
+    login = get_gh_login(session, config['github']['token'])
     if not login:
         click.echo("Invalid token", err=True)
         exit(10)

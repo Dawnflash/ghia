@@ -1,17 +1,19 @@
 from ghia.web import create_app, webapp_gh_issue_handler, webapp_gh_validate
-from helpers import inject_flask_env, mkauth, mkauth_default, auth_default
+from helpers import init_flask_env, mkauth, mkauth_default, auth_default, get_user
 import pytest
+import betamax
+import os
 
 
-def tclient():
-    app = create_app()
+@pytest.fixture
+def app(betamax_session):
+    init_flask_env()
+    app = create_app(betamax_session)
     app.config['TESTING'] = True
-    return app.test_client()
+    return app
 
 
-def test_create_app_default():
-    inject_flask_env()
-    app = create_app()
+def test_create_app_default(app):
     assert app is not None
     assert 'ghia' in app.config
     assert app.config['ghia']['strategy'] == "append"
@@ -19,30 +21,29 @@ def test_create_app_default():
 
 
 @pytest.mark.parametrize("strategy,dryrun", [("change", True), ("set", False)])
-def test_create_app_param(strategy, dryrun):
-    inject_flask_env(strategy, dryrun)
-    app = create_app()
+def test_create_app_param(strategy, dryrun, app):
+    conf_bak = app.config['ghia'].copy()
+    app.config['ghia']['strategy'] = strategy
+    app.config['ghia']['dry_run'] = dryrun
     assert app is not None
     assert 'ghia' in app.config
     assert app.config['ghia']['strategy'] == strategy
     assert app.config['ghia']['dry_run'] is dryrun
+    app.config['ghia'] = conf_bak
 
 
-@pytest.mark.parametrize("needle", ["ghia", "on", "change", "rules"])
-def test_get(needle):
-    mkauth(auth_default()[0], None)
-    inject_flask_env("change", True)
-    gind = tclient().get('/')
+@pytest.mark.parametrize("needle", ["ghia", "on", "append", "rules", get_user().lower()])
+def test_get(needle, app):
+    gind = app.test_client().get('/')
 
     assert gind.status_code == 200
     assert needle in gind.get_data(as_text=True).lower()
-    mkauth_default()
 
 
-def test_post():
-    mkauth(auth_default()[0], None)
-    inject_flask_env()
-    client = tclient()
+def test_post(app):
+    # remove the secret
+    secret = app.config['ghia']['github'].pop('secret', None)
+    client = app.test_client()
 
     pind = client.post('/')
     assert pind.status_code == 404
@@ -58,15 +59,14 @@ def test_post():
         'action': 'UNKNOWN_ACTION'
     })
     assert pind.status_code == 200
-    mkauth_default()
+    if secret:
+        app.config['ghia']['github']['secret'] = secret
 
 
-def test_secret_validation():
+def test_secret_validation(app):
     # signature for 40*f secret and empty request body
     sign = '03d77323702811c39a628a4f05ead1a89c76c74d'
-    print(auth_default()[1])
-    inject_flask_env()
-    client = tclient()
+    client = app.test_client()
 
     pind = client.post('/', headers={
         'X-GitHub-Event': 'ping',

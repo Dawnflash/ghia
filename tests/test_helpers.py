@@ -1,9 +1,9 @@
 from ghia.helpers import load_config, load_config_auth, load_config_rules, load_config_multiple
-from helpers import config, mkauth, mkauth_default
+from helpers import fixture, mkauth, mkauth_default
 
 
 def lconf(name):
-    conf_file = open(config(name))
+    conf_file = open(fixture(f"{name}.cfg"))
     return load_config(conf_file)
 
 
@@ -32,9 +32,9 @@ def test_load_config_rules():
 
 
 def test_load_config_multiple():
-    conf = load_config_multiple(f"{config('auth')}:{config('rules')}")
+    conf = load_config_multiple(f"{fixture('auth.cfg')}:{fixture('rules.cfg')}")
     assert conf is not None
-    conf = load_config_multiple(f"{config('auth')}:{config('auth')}")
+    conf = load_config_multiple(f"{fixture('auth.cfg')}:{fixture('auth.cfg')}")
     assert conf is None
-    conf = load_config_multiple(f"{config('rules')}:{config('rules')}")
+    conf = load_config_multiple(f"{fixture('rules.cfg')}:{fixture('rules.cfg')}")
     assert conf is None

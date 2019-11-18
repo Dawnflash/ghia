@@ -6,7 +6,7 @@ with open("README.md", "r") as f:
 
 setup(
     name='ghia_zahumada',
-    version='0.3',
+    version='0.4.1',
     description='Assigns GitHub issues to people (cli batch/webhook)',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -16,7 +16,7 @@ setup(
     license='MIT License',
     url='https://github.com/Dawnflash/ghia',
     packages=['ghia'],
-    package_data={'ghia': ['templates/*.html', 'tests']},
+    package_data={'ghia': ['templates/*.html']},
     entry_points={
         'console_scripts': [
             'ghia = ghia.cli:main',
@@ -34,7 +34,6 @@ setup(
     ],
     install_requires=['Flask', 'click', 'requests'],
     setup_requires=['pytest-runner'],
-    tests_require=['pytest', 'betamax'],
-    test_suite="tests",
+    tests_require=['pytest', 'betamax', 'Flask', 'click'],
     zip_safe=False,
 )
