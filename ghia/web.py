@@ -14,7 +14,7 @@ app_hook_issues_action_wl = ['opened', 'edited', 'transferred', 'reopened',
 
 
 # Gather config
-def create_app(session=requests.Session()):
+def create_app(config_filename=None, session=requests.Session()):
     app = Flask(__name__)
     app.register_blueprint(index_bp)
     # Fetch configuration

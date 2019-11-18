@@ -8,7 +8,7 @@ import os
 @pytest.fixture
 def app(betamax_session):
     init_flask_env()
-    app = create_app(betamax_session)
+    app = create_app(session=betamax_session)
     app.config['TESTING'] = True
     return app
 
