@@ -36,7 +36,7 @@ The project contains 3 sets of tests:
 Only unit tests are distributed in the package.
 #### Unit tests
 ```bash
-$ python test.py test
+$ python setup.py test
 ```
 These tests use pre-recorded betamax cassettes for mocking GitHub API communication. You don't need to set any GitHub credentials to test.
 
@@ -49,7 +49,7 @@ $ export GITHUB_TOKEN=<github token>
 $ cd tests_environment
 $ ./delete.sh && ./setup.sh
 $ cd ..
-$ python test.py test
+$ python setup.py test
 ```
 #### Integration tests
 These tests always use a live repo. To use them you need to be a member of the `mi-pyt-ghia` organization.
