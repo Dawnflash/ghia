@@ -1,9 +1,22 @@
+"""GitHub communication core module
+"""
+
 import click
 import requests
 
 
 # get authenticated user
 def get_gh_login(session, token):
+    """Get GitHub login from an access token
+
+    :param session: current session
+    :type  session: class:`requests.sessions.Session`
+    :param token: GitHub access token
+    :type  token: str
+
+    :return GitHub login (name)
+    :rtype  str
+    """
     url = 'https://api.github.com/user'
     r = session.get(url, headers={'Authorization': f"token {token}"})
 
@@ -14,8 +27,17 @@ def get_gh_login(session, token):
     return r.json()['login']
 
 
-# checks if any user pattern matches the issue
-def check_match(issue, user, patterns):
+def check_match(issue, patterns):
+    """Check if any pattern matches the given issue
+
+    :param issue: issue to match against
+    :type  issue: dict
+    :param patterns: patterns to try to match
+    :type  patterns: list
+
+    :return: True if any pattern matches
+    :rtype:  bool
+    """
     for item, rgx in patterns:
         if item == 'title' or item == 'any':
             if rgx.search(issue['title']):
@@ -31,7 +53,15 @@ def check_match(issue, user, patterns):
 
 
 def print_assign_diff(old, new):
-    # outputs are meant to be sorted alphabetically, case-insensitive
+    """Print a colored diff in assignees
+
+    Names are sorted alphabetically, case-insensitive
+
+    :param old: original assignees
+    :type  old: list
+    :param new: new assignees
+    :type  new: list
+    """
     for user in sorted(new.union(old), key=str.casefold):
         if user not in new:
             # deletion
@@ -45,6 +75,11 @@ def print_assign_diff(old, new):
 
 
 def print_issue_update_error(issue):
+    """Print a colored error about issue update failure
+
+    :param issue: processed issue
+    :type  issue: dict
+    """
     click.echo("   {}: Could not update issue {}".format(
             click.style('ERROR', bold=True, fg='red'),
             f"{issue['repository_url'].split('/repos/')[1]}#{issue['number']}"
@@ -52,6 +87,20 @@ def print_issue_update_error(issue):
 
 
 def add_fallback_label(session, issue, config, verbose):
+    """Add a fallback label to an issue
+
+    :param session: the current session
+    :type  session: class:`requests.session.Session`
+    :param issue: processed issue
+    :type  issue: dict
+    :param config: app configuration
+    :type  config: dict
+    :param verbose: print status and errors
+    :type  verbose: bool
+
+    :return: False on failure, True otherwise
+    :rtype:  bool
+    """
     label = config['fallback']['label']
     # check if fallback label already exists
     labels = [l['name'] for l in issue['labels']]
@@ -83,6 +132,24 @@ def add_fallback_label(session, issue, config, verbose):
 
 # publishes changes in assignees to GitHub
 def reassign(session, token, old, new, issue, verbose):
+    """Assign given users to issue
+
+    :param session: the current session
+    :type  session: class:`requests.session.Session`
+    :param token: GitHub access token
+    :type  token: str
+    :param old: original assignees
+    :type  old: list
+    :param new: new assignees
+    :type  new: list
+    :param issue: issue to assign users to
+    :type  issue: dict
+    :param verbose: print status and errors
+    :type  verbose: bool
+
+    :return: False on failure, True otherwise
+    :rtype:  bool
+    """
     r = session.patch(issue['url'],
                       json={'assignees': list(new)},
                       headers={'Authorization': f"token {token}"})
@@ -99,6 +166,18 @@ def reassign(session, token, old, new, issue, verbose):
 
 # gathers issues from the API
 def gather_issues(session, reposlug, token):
+    """Fetch all issues from the provided repo
+
+    :param session: the current session
+    :type  session: class:`requests.session.Session`
+    :param reposlug: GitHub reposlug "owner/repository"
+    :type  reposlug: str
+    :param token: GitHub access token
+    :type  token: str
+
+    :return: gathered issues
+    :rtype:  list
+    """
     user, repo = reposlug.split('/')
     url = f"https://api.github.com/repos/{user}/{repo}/issues"
     issues = []
@@ -123,6 +202,20 @@ def gather_issues(session, reposlug, token):
 
 
 def process_issue(session, issue, config, verbose=False):
+    """Process a single issue
+
+    :param session: the current session
+    :type  session: class:`requests.session.Session`
+    :param issue: the issue to process
+    :type  issue: dict
+    :param config: app configuration
+    :type  config: dict
+    :param verbose: print status and errors
+    :type  verbose: bool, optional
+
+    :return: False on failure, True otherwise
+    :rtype:  bool
+    """
     if issue['state'] == 'closed':
         return True
 
@@ -140,7 +233,7 @@ def process_issue(session, issue, config, verbose=False):
 
     for user in config['patterns']:
         patterns = config['patterns'][user]
-        if check_match(issue, user, patterns):
+        if check_match(issue, patterns):
             new_assignees.add(user)
 
     ret = True

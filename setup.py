@@ -1,12 +1,12 @@
 #! /usr/bin/env python
 from setuptools import setup
 
-with open("README.md", "r") as f:
+with open("README.rst", "r") as f:
     long_description = f.read()
 
 setup(
     name='ghia_zahumada',
-    version='0.4.2',
+    version='0.5',
     description='Assigns GitHub issues to people (cli batch/webhook)',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -35,5 +35,8 @@ setup(
     install_requires=['Flask', 'click', 'requests'],
     setup_requires=['pytest-runner'],
     tests_require=['pytest', 'betamax', 'Flask', 'click'],
+    extras_require={
+        'dev': ['sphinx'],
+    },
     zip_safe=False,
 )

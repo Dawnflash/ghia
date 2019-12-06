@@ -1,3 +1,7 @@
+
+"""Logic of the CLI batch interface
+"""
+
 import requests
 import click
 import re
@@ -6,6 +10,18 @@ from .github import gather_issues, process_issue
 
 
 def click_validate_config_auth(ctx, param, value):
+    """Validate and parse auth rules file (Click callback)
+
+    :param ctx: Click context
+    :type  ctx: class:`click.Context`
+    :param param: Click params
+    :type  param: dict
+    :param value: auth config file
+    :type  value: class:`click.File`
+
+    :return: validated and parsed auth config
+    :rtype:  class:`configparser.ConfigParser`
+    """
     try:
         return load_config_auth(load_config(value))
     except (Exception):
@@ -13,6 +29,18 @@ def click_validate_config_auth(ctx, param, value):
 
 
 def click_validate_config_rules(ctx, param, value):
+    """Validate and parse config rules file (Click callback)
+
+    :param ctx: Click context
+    :type  ctx: class:`click.Context`
+    :param param: Click params
+    :type  param: dict
+    :param value: rules config file
+    :type  value: class:`click.File`
+
+    :return: validated and parsed rules config
+    :rtype:  class:`configparser.ConfigParser`
+    """
     try:
         return load_config_rules(load_config(value))
     except (Exception):
@@ -20,6 +48,18 @@ def click_validate_config_rules(ctx, param, value):
 
 
 def click_validate_reposlug(ctx, param, value):
+    """Validate reposlug (Click callback)
+
+    :param ctx: Click context
+    :type  ctx: class:`click.Context`
+    :param param: Click params
+    :type  param: dict
+    :param value: reposlug to validate
+    :type  value: str
+
+    :return: validated reposlug
+    :rtype:  str
+    """
     rgx = '^[^/ ]+/[^/ ]+$'  # name/repo
     if not re.search(rgx, value):
         raise click.BadParameter('not in owner/repository format')
@@ -27,6 +67,16 @@ def click_validate_reposlug(ctx, param, value):
 
 
 def batch_process(config, reposlug, session=requests.Session()):
+    """Process all issues in a repo
+
+    :param config: full configuration
+    :type  config: class:`configparser.ConfigParser`
+    :param reposlug: owner/repository GitHub reposlug
+    :type  reposlug: str
+    :param session: current session
+    :type  session: class:`requests.sessions.Session`, optional
+    """
+
     token = config['github']['token']
     issues = gather_issues(session, reposlug, token)
 
@@ -61,4 +111,6 @@ def main_cmd(strategy, dry_run, config_auth, config_rules, reposlug):
 
 
 def main():
+    """CLI entrypoint, initializes the Click main command"""
+
     main_cmd(prog_name='ghia')

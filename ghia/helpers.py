@@ -1,8 +1,19 @@
+"""Various helper functions
+"""
+
 import configparser
 import re
 
 
 def load_config_multiple(paths):
+    """Parse and merge multiple configuration files
+
+    :param paths: paths to the configuration files
+    :type  paths: list
+
+    :return: fused configuration dictionary
+    :rtype: dict
+    """
     config = configparser.ConfigParser()
     config.optionxform = str
     try:
@@ -13,6 +24,14 @@ def load_config_multiple(paths):
 
 
 def load_config(config_file):
+    """Parse a configuration file
+
+    :param config_file: configuration file
+    :type  config_file: file
+
+    :return: parsed configparser configuration
+    :rtype: class:`configparser.ConfigParser`
+    """
     config = configparser.ConfigParser()
     config.optionxform = str
     config.read_file(config_file)
@@ -20,6 +39,14 @@ def load_config(config_file):
 
 
 def load_config_auth(config_parser):
+    """Convert an auth cfparser config into a dictionary
+
+    :param config_parser: configparser configuration
+    :type  paths: class:`configparser.ConfigParser`
+
+    :return: configuration as a dictionary
+    :rtype: dict
+    """
     config = {'github': {'token': config_parser['github']['token']}}
     if config_parser.has_option('github', 'secret'):
         config['github']['secret'] = config_parser['github']['secret']
@@ -27,6 +54,14 @@ def load_config_auth(config_parser):
 
 
 def load_config_rules(config_parser):
+    """Convert a rules cfparser config into a dictionary
+
+    :param config_parser: configparser configuration
+    :type  paths: class:`configparser.ConfigParser`
+
+    :return: configuration as a dictionary
+    :rtype: dict
+    """
     config = {'patterns': {}}
     for user in config_parser['patterns']:
         config['patterns'][user] = []

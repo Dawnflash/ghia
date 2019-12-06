@@ -1,3 +1,6 @@
+"""Flask server as a GitHub webhook receiver
+"""
+
 import requests
 import hmac
 import os
@@ -13,8 +16,17 @@ app_hook_issues_action_wl = ['opened', 'edited', 'transferred', 'reopened',
                              'assigned', 'unassigned', 'labeled', 'unlabeled']
 
 
-# Gather config
 def create_app(config_filename=None, session=requests.Session()):
+    """Create a configured Flask application
+
+    :param config_filename: config file to use, UNUSED
+    :type  config_filename: str, optional
+    :param session: the current session
+    :type  session: class:`requests.session.Session`, optional
+
+    :return: Flask application
+    :rtype:  class:`flask.app.Flask`
+    """
     app = Flask(__name__)
     app.register_blueprint(index_bp)
     # Fetch configuration
@@ -41,9 +53,10 @@ def create_app(config_filename=None, session=requests.Session()):
     return app
 
 
-# The default web entry point
 @index_bp.route('/', methods=['GET', 'POST'])
 def index():
+    """The default web entry point (GET+POST / route)
+    """
     config = current_app.config['ghia']
 
     if request.method == 'GET':
@@ -64,8 +77,9 @@ def index():
     abort(404)
 
 
-# Webhook issue handler
 def webapp_gh_issue_handler():
+    """Handler for incoming issue webhooks
+    """
     payload = request.json
     # Only act on specific actions
     if payload['action'] not in app_hook_issues_action_wl:
@@ -77,8 +91,9 @@ def webapp_gh_issue_handler():
     return '', 200
 
 
-# Validate github webhook if applicable
 def webapp_gh_validate():
+    """Validate github webhook using ``secret`` if applicable
+    """
     conf = current_app.config['ghia']
     # If secret is not set, do not authenticate
     if 'secret' not in conf['github']:
