@@ -6,6 +6,6 @@ jobs:
       - image: circleci/python:3.7.5
     steps:
       - checkout
-      - run: python -m pip install .[dev]
+      - run: python -m pip install .[dev] --user
       - run: python setup.py test --addopts -v
       - run: cd docs && make doctest
