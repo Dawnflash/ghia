@@ -20,7 +20,7 @@ GHIA: GitHub Issue Assigner
    examples
 
 * Repository: https://github.com/Dawnflash/ghia
-* Documentation: http://readthedocs.org
+* Documentation: https://ghia-zahumada.readthedocs.io/en/latest/
 
 Introduction
 ############

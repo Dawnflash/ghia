@@ -18,6 +18,7 @@ Links
 
 * `Assignment <https://github.com/cvut/ghia>`_
 * `Demo webapp <http://ghia.dawnflash.cz>`_
+* `Documentation <https://ghia-zahumada.readthedocs.io/en/latest/>`_
 
 Webhook handler mode
 --------------------
@@ -34,6 +35,7 @@ The default strategy is ``append``.
 CLI mode
 --------
 Batch-process all issues in a single run
+
 .. code:: bash
 
     $ python -m ghia --help
