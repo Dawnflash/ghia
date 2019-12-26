@@ -9,7 +9,8 @@ GHIA may be used in two modes of operation:
 CLI
 ---
 
-Process all issues in a given repo, batch style.
+Process all issues in given repositories, batch style.
+You can specify one or more repositories as GitHub reposlugs.
 
 You can put your whole configuration in a single file.
 In that case, point ``-a`` and ``-r`` switches to the same file.
@@ -24,7 +25,19 @@ A CLI example:
 
 .. code:: bash
 
-    $ python -m ghia -a auth.cfg -r rules.cfg -s set myuser/myrepo
+    $ python -m ghia -a auth.cfg -r rules.cfg -s set myuser/repo1 myuser/repo2
+
+
+
+Optional features
+^^^^^^^^^^^^^^^^^
+
+GHIA CLI supports the following optional features :
+
+* **dry-run (-d)**:
+    Do not send requests to GitHub API, only print output
+* **asynchronous processing (-x)**:
+    Process repos and issues within asynchronously (output won't be ordered)
 
 .. _usage_webhook:
 

@@ -54,7 +54,6 @@ Alternatively you can clone the repository and run
 
     $ pip install .
 
-
 .. _assignment_strategy:
 
 Assignment strategy
@@ -67,7 +66,6 @@ GHIA supports 3 assignment strategies:
 * **change**: replace existing assignees with matching users
 
 The default strategy is always ``append``.
-
 
 .. _building_docs:
 
