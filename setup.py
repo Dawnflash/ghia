@@ -6,7 +6,7 @@ with open("README.rst", "r") as f:
 
 setup(
     name='ghia_zahumada',
-    version='0.5',
+    version='0.6',
     description='Assigns GitHub issues to people (cli batch/webhook)',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -32,7 +32,7 @@ setup(
         'Environment :: Console',
         'Environment :: Web Environment',
     ],
-    install_requires=['Flask', 'click', 'requests'],
+    install_requires=['Flask', 'click', 'requests', 'aiohttp'],
     setup_requires=['pytest-runner'],
     tests_require=['pytest', 'betamax', 'Flask', 'click'],
     extras_require={
