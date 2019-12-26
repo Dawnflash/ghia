@@ -6,7 +6,7 @@ with open("README.rst", "r") as f:
 
 setup(
     name='ghia_zahumada',
-    version='0.6',
+    version='0.6.1',
     description='Assigns GitHub issues to people (cli batch/webhook)',
     long_description=long_description,
     long_description_content_type="text/markdown",

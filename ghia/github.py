@@ -196,6 +196,7 @@ def process_issue(session, issue, config, verbose=False):
         if verbose:
             print_assign_diff(old_assignees, old_assignees, issue)
             click.echo(issue['ghia_output'], nl=False)
+            del issue['ghia_output']
         return True
 
     # append strategy keeps old assignees, others do not
@@ -220,6 +221,7 @@ def process_issue(session, issue, config, verbose=False):
 
     if verbose:
         click.echo(issue['ghia_output'], nl=False)
+        del issue['ghia_output']
     return ret
 
 
