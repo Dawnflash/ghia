@@ -14,13 +14,16 @@ if [[ -z "${GITHUB_TOKEN}" ]]; then
   echo "Set environment variable GITHUB_TOKEN"
   exit 1
 fi
-
+REPO_NAME=$GITHUB_USER
+if [ $# -ge 1 ]; then
+    REPO_NAME=$1
+fi
 GITHUB_ORG="MI-PYT-ghia"
-REPO=${GITHUB_ORG}/${GITHUB_USER}
+REPO=${GITHUB_ORG}/${REPO_NAME}
 
 # Create repo
-mkdir -p "${GITHUB_USER}"
-cd "${GITHUB_USER}" || exit
+mkdir -p "${REPO_NAME}"
+cd "${REPO_NAME}" || exit
 git init
 git commit --allow-empty -m"Initial commit"
 hub create "${REPO}"

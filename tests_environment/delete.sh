@@ -9,8 +9,12 @@ if [[ -z "${GITHUB_TOKEN}" ]]; then
   exit 1
 fi
 
+REPO_NAME=$GITHUB_USER
+if [ $# -ge 1 ]; then
+    REPO_NAME=$1
+fi
 GH_ORG="MI-PYT-ghia"
-REPO=${GH_ORG}/${GITHUB_USER}
+REPO=${GH_ORG}/${REPO_NAME}
 
 echo "HTTP DELETE https://api.github.com/repos/${REPO}"
 curl --header "Authorization: token ${GITHUB_TOKEN}" -X DELETE https://api.github.com/repos/${REPO}

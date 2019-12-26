@@ -8,7 +8,7 @@ from helpers import fixture
 def test_validate_reposlug():
     with pytest.raises(Exception):
         click_validate_reposlug(None, None, "abcdef")
-    assert "abc/def" == click_validate_reposlug(None, None, "abc/def")
+    assert ["abc/def"] == click_validate_reposlug(None, None, ["abc/def"])
 
 
 def test_run():
