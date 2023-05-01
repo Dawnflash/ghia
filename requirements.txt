@@ -11,7 +11,7 @@ chardet==3.0.4
 Click==7.0
 doc8==0.8.0
 docutils==0.15.2
-Flask==1.1.1
+Flask==2.3.2
 idna==2.8
 imagesize==1.1.0
 importlib-metadata==0.23
